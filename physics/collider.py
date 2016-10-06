@@ -31,8 +31,10 @@ class Collider:
 		l = len(passiveobject_faces)
 		for i in xrange(0,l):
 			vectortoface = map(sub, activeobject_position, passiveobject_facecenters[i])
+			
+			# First pass collision check - ensure active body is outside face
+		    # Face normal vector and the vector between face center and body is used for this test
 			# Check for edge cases - this checks if angle is acute
-			#print self.objB.name, vectortoface, passiveobject_normals[i], passiveobject_faces[i]
 			if 0<=vector.cosangleBetween(vectortoface, passiveobject_normals[i])<=1:
 				# Check if in next time step, we will cross the face
 				temp = RigidBody(self.objA.solver)
@@ -44,9 +46,8 @@ class Collider:
 				nextpos = temp.pos
 				newvectortoface = map(sub, nextpos, passiveobject_facecenters[i])
 				costheta = vector.cosangleBetween(newvectortoface, passiveobject_normals[i])
-				#print costheta
-				#print "Particle data : ", activeobject_position, activeobject_velocity
-				#print "After coll : ", temp.pos, temp.vel
+	
+	            # This checks if face has been crossed, if it has - go to next pass
 				if not (0<=costheta<=1):
 					self.p = activeobject_position
 					self.v = temp.vel
@@ -54,16 +55,24 @@ class Collider:
 					self.c = passiveobject_facecenters[i]
 					self.n = passiveobject_normals[i]
 					self.i = i
+					
+					# Second pass collision check - ensure that we can find a point on the plane which can be reached within timestep
+					# self.t=0 corresponds to beginning of timestep, self.t=1 corresponds to its end
 					self.t = (vector.dotproduct(self.c,self.n) - vector.dotproduct(self.p,self.n))/(vector.dotproduct(self.v,self.n))
 					if not(0<=self.t<=1):
 						continue
 					pn = map(add, self.p, [self.t*v0 for v0 in self.v])
+					
+					# Third pass collision check - ensure that the point on plane is inside the face we are checking collision against
 					if not vector.insideFace(pn,[self.objB.vertices[x] for x in self.objB.faces[i]]):
 						continue
+					
+					# If all checks pass, report collision has occured	
 					self.pn = pn
 					return True 
 		return False
 				
+    # Provides collision response on detection of a collision
 	def onCollision(self):
 		objA = self.objA
 		objB = self.objB
@@ -83,14 +92,13 @@ class Collider:
 		# Modify velocity due to frictional impulse along plane surface
 		frictionimpulsemagnitude = objB.friction*(1)*vector.magnitude(normalvector)
 		planevectormagnitude = vector.magnitude(planevector)
-		#print frictionimpulsemagnitude, planevectormagnitude
+		
+		# Friction only acts as long as there is relative motion between surface.
+		# It ceases to exist when frictional impulse nulli momentum along plane vector.
 		if frictionimpulsemagnitude<planevectormagnitude:
 			planevectorunit = vector.normalize(planevector) 	
 			frictionvector = [frictionimpulsemagnitude*planevectorunitcomp for planevectorunitcomp in planevectorunit]
-			#print planevector, frictionvector
 			planevector = map(sub, planevector, frictionvector)
-			#print planevector
-			#print vector.magnitude(planevector)
 		else:
 			planevector = [0,0,0]
 

@@ -12,5 +12,3 @@ class CacheExport:
 		file = open(self.cachefile,"a")
 		file.write(particledata)
 		file.close()
-
-#CacheExport().exportToCache('hello')

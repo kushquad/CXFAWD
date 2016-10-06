@@ -39,6 +39,9 @@ def normalize(v):
 	except:
 		return [0,0,0]
 
+# Check if a given point p on the plane of a given face,
+# lies inside it.
+# The plane of a face is decided by three points which lie on it.
 def insideFace(p, face):
 	p1,p2,p3 = face
 	ab = map(sub, p2, p1)
@@ -53,5 +56,3 @@ def insideFace(p, face):
 	if (0<=alpha<=1) and (0<=beta<=1) and (0<=gamma<=1):
 		return True
 	return False
-
-#print insideFace([0,-5,1],[[0,-5,1],[0,5,1],[0,0,-5]])

@@ -1,6 +1,8 @@
 from collider import Collider
 from constants import MAX_ITERATIONS, TIME_STEP_LENGTH
 
+GEN_RATE = 2
+
 class Solver:
 	def __init__(self):
 		self.maxsimulationiterations = MAX_ITERATIONS
@@ -12,15 +14,15 @@ class Solver:
 		
 	def run(self):
 		for iteration in xrange(0, self.maxsimulationiterations):
-			for j in xrange(2):
+			for j in xrange(GEN_RATE):
 				self.emitters[0].createParticle()
 			self.time = iteration
 			print "\nFrame "+str(iteration),
+			
 			# Phase 1 : Collision event
 			l = len(self.colliders)
 			print "Collision checks : "+str(l)
 			for i in xrange(l):
-				#print i,
 				colliderpairs = self.colliders[i]
 				if colliderpairs:
 					'''
@@ -31,13 +33,11 @@ class Solver:
 					if colliderpairs.objA.collideFlag==1:
 						colliderpairs.objA.collideFlag=2
 						continue
-					if colliderpairs.checkCollision():	
-						#print "Collision"				
+					if colliderpairs.checkCollision():				
 						colliderpairs.onCollision()
 						
 						# Phase 2 : Splitting logic for rigid bodies
 						if colliderpairs.objA.split():
-							print "Split"
 							self.colliders[i] = None
 
 			# Phase 3 : Dynamics for all rigid bodies
@@ -49,4 +49,3 @@ class Solver:
 						rigidbody.updatePos(TIME_STEP_LENGTH)
 						rigidbody.collideFlag=0
 					rigidbody.postDynamics()
-			#print self.rigidbodies[1]
