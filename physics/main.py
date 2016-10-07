@@ -36,9 +36,9 @@ bunny = Object(solverobj, '../assets/stanford_bunny.obj')
 bunny.applyTranslation([-2.7,0,-1.1])
 bunny.load()
 
-#cone = Object(solverobj, '../assets/cone_new.obj')
-#cone.applyTranslation([-2.2,0,1.6])
-#cone.load()
+cone = Object(solverobj, '../assets/cone_new.obj')
+cone.applyTranslation([-2.2,0,1.6])
+cone.load()
 
 solverobj.run()
 
