@@ -1,5 +1,5 @@
 # How To Train Your Particles
-![sampleframe](https://github.com/kushquad/How-To-Train-Your-Particles/blob/master/frame.tga "Sample frame")
+![sampleframe](https://github.com/kushquad/How-To-Train-Your-Particles/blob/master/frame.png "Sample frame")
 ## Instructions to Run:
 This project is meant to be run on a Linux machine with support for OpenGL 3.0+ and a gcc C++ compiler(4.7+)
 
